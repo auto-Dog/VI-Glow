@@ -11,12 +11,17 @@ from torch.autograd import Variable, grad
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms, utils
 from misc import util,place_dataset
+from misc.logger import Logger
 from network.model import Glow
 
+save_root = './run'
+logger = Logger(save_root)
+logger.global_step = 0
+logger.auto_backup('./')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 parser = argparse.ArgumentParser(description="Glow trainer")
-parser.add_argument("--batch", default=16, type=int, help="batch size")
+parser.add_argument("--batch", default=128, type=int, help="batch size")
 parser.add_argument("--iter", default=200000, type=int, help="maximum iterations")
 parser.add_argument(
     "--n_flow", default=32, type=int, help="number of flows in each block"
@@ -34,7 +39,7 @@ parser.add_argument("--n_bits", default=5, type=int, help="number of bits")
 parser.add_argument("--lr", default=1e-4, type=float, help="learning rate")
 parser.add_argument("--img_size", default=64, type=int, help="image size")
 parser.add_argument("--temp", default=0.7, type=float, help="temperature of sampling")
-parser.add_argument("--n_sample", default=80, type=int, help="number of samples")
+parser.add_argument("--n_sample", default=32, type=int, help="number of samples")
 parser.add_argument("path", default='/kaggle/input/images256',metavar="PATH", type=str, help="Path to image directory")
 
 
@@ -92,6 +97,12 @@ def calc_loss(log_p, logdet, image_size, n_bins):
         (logdet / (log(2) * n_pixel)).mean(),
     )
 
+def log_metric(logger,loss,logP,det):
+    # auc = roc_auc_score(target, prob)
+    logger.log_scalar('loss',loss,print=False)
+    # logger.log_scalar(prefix+'/AUC',auc,print=True)
+    logger.log_scalar('logP',logP, print= False)
+    logger.log_scalar('det',det, print= False)
 
 def train(args, model, optimizer):
     dataset = iter(sample_data(args.path, args.batch, args.img_size))
@@ -105,6 +116,7 @@ def train(args, model, optimizer):
 
     with tqdm(range(args.iter)) as pbar:
         for i in pbar:
+            logger.update_step()
             image, _ = next(dataset)
             image = image.to(device)
 
@@ -139,15 +151,15 @@ def train(args, model, optimizer):
             pbar.set_description(
                 f"Loss: {loss.item():.5f}; logP: {log_p.item():.5f}; logdet: {log_det.item():.5f}; lr: {warmup_lr:.7f}"
             )
-
+            log_metric(logger,loss.item(),log_p.item(),log_det.item())
             if i % 100 == 0:
                 with torch.no_grad():
                     utils.save_image(
-                        model_single.reverse(z_sample).cpu().data,
+                        model_single.reverse(z_sample).cpu().data[:20,...], # 只画20个
                         f"sample/{str(i + 1).zfill(6)}.png",
                         normalize=True,
                         nrow=10,
-                        range=(-0.5, 0.5),
+                        value_range=(-0.5, 0.5),    # update
                     )
 
             if i % 10000 == 0:
