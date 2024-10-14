@@ -10,7 +10,7 @@
   },
   "dataset": {
     "problem": "patch",
-    "root": "<DATASET ROOT>",
+    "root": "/kaggle/input/images256",
     "resize": 256,
     "num_classes": 0,
     "num_workers": 4,

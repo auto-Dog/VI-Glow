@@ -3,8 +3,7 @@ import signal
 import argparse
 
 from torchvision import transforms, datasets
-
-from misc import util
+from misc import util,place_dataset
 from network import Builder, Trainer
 
 
@@ -46,8 +45,8 @@ if __name__ == '__main__':
         ]
     )
 
-    dataset = datasets.ImageFolder(hps.dataset.root, transform=transform)
-
+    # dataset = datasets.ImageFolder(hps.dataset.root, transform=transform)
+    dataset = place_dataset.PlaceImageFolder(hps.dataset.root, transform=transform)
     # start training
     trainer = Trainer(hps=hps, dataset=dataset, **state)
     trainer.train()
