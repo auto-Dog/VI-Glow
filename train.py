@@ -18,7 +18,7 @@ def parse_args():
 
 if __name__ == '__main__':
     # this enables a Ctrl-C without triggering errors
-    signal.signal(signal.SIGINT, lambda x, y: sys.exit(0))
+    # signal.signal(signal.SIGINT, lambda x, y: sys.exit(0))
 
     # parse arguments
     args = parse_args()
