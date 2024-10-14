@@ -53,7 +53,8 @@ def sample_data(path, batch_size, image_size):
         ]
     )
 
-    dataset = place_dataset.PlaceImageFolder(path, transform=transform)
+    # dataset = place_dataset.PlaceImageFolder(path, transform=transform) # on kaggle
+    dataset = datasets.ImageFolder(path, transform=transform)
     loader = DataLoader(dataset, shuffle=True, batch_size=batch_size, num_workers=4)
     loader = iter(loader)
 
