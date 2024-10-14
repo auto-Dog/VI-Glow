@@ -10,7 +10,7 @@ from torch import nn, optim
 from torch.autograd import Variable, grad
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms, utils
-from misc import util,place_dataset
+from misc import place_dataset
 from misc.logger import Logger
 from network.model import Glow
 
