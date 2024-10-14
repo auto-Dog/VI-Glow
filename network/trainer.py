@@ -118,7 +118,8 @@ class Trainer:
                 if len(self.devices) > 1 and not hasattr(self.graph, 'module'):
                     self.graph = torch.nn.parallel.DataParallel(module=self.graph,
                                                                 device_ids=self.devices,
-                                                                output_device=self.devices[0])
+                                                                output_device=self.devices[0],
+                                                                broadcast_buffers=False,)
 
                 # forward model
                 z, nll, y_logits = self.graph(x=x, y_onehot=y_onehot)
