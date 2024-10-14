@@ -91,7 +91,11 @@ class InvConv2dLU(nn.Module):
 
         weight = np.random.randn(in_channel, in_channel)
         q, _ = la.qr(weight)
-        w_p, w_l, w_u = la.lu(q.astype(np.float32))
+        w_p0, w_l0, w_u0 = la.lu(q.astype(np.float32))
+        w_p = w_p0.copy()
+        w_l = w_l0.copy()
+        w_u = w_u0.copy()
+        
         w_s = np.diag(w_u)
         w_u = np.triu(w_u, 1)
         u_mask = np.triu(np.ones_like(w_u), 1)
