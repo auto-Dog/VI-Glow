@@ -18,8 +18,8 @@ save_root = './run'
 logger = Logger(save_root)
 logger.global_step = 0
 logger.auto_backup('./')
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") # 指定主设备
 parser = argparse.ArgumentParser(description="Glow trainer")
 parser.add_argument("--batch", default=128, type=int, help="batch size")
 parser.add_argument("--iter", default=200000, type=int, help="maximum iterations")
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     model_single = Glow(
         3, args.n_flow, args.n_block, affine=args.affine, conv_lu=not args.no_lu
     )
-    model = nn.DataParallel(model_single)
+    model = nn.DataParallel(model_single,device_ids=list(range(torch.cuda.device_count())))
     # model = model_single
     model = model.to(device)
 
