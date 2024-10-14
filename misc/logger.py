@@ -3,7 +3,7 @@ sys.path.append('../')
 from shutil import copy, rmtree
 import torch
 from torch.utils.tensorboard import SummaryWriter
-from utils.utility import *
+from misc.utility import *
 
 class Logger(object):
     """
