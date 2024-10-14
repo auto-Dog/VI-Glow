@@ -32,17 +32,49 @@ def is_image_file(filename: str) -> bool:
     return has_file_allowed_extension(filename, IMG_EXTENSIONS)
 
 
-def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
-    """Finds the class folders in a dataset.
+# def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
+#     """Finds the class folders in a dataset.
 
-    See :class:`DatasetFolder` for details.
+#     See :class:`DatasetFolder` for details.
+#     """
+#     classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
+#     if not classes:
+#         raise FileNotFoundError(f"Couldn't find any class folder in {directory}.")
+
+#     class_to_idx = {cls_name: i for i, cls_name in enumerate(classes)}
+#     return classes, class_to_idx
+def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
+    """Find the class folders in a dataset structured as follows::
+    dog:
+    root/d/dog/xxx.png
+    root/d/dog/xxy.png
+    root/d/dog/[...]/xxz.png
+
+    This method can be overridden to only consider
+    a subset of classes, or to adapt to a different dataset directory structure.
+
+    Args:
+        directory(str): Root directory path, corresponding to ``self.root``
+
+    Raises:
+        FileNotFoundError: If ``dir`` has no class folders.
+
+    Returns:
+        (Tuple[List[str], Dict[str, int]]): List of all classes and dictionary mapping each class to an index.
     """
-    classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
+    classes = []
+    for class_capital in os.scandir(directory):
+        if class_capital.is_dir():
+            for class_name in os.scandir(class_capital.path):
+                if class_name.is_dir():
+                    classes.append(class_capital.name+'/'+class_name.name)
+    classes = sorted(classes)
     if not classes:
         raise FileNotFoundError(f"Couldn't find any class folder in {directory}.")
 
     class_to_idx = {cls_name: i for i, cls_name in enumerate(classes)}
     return classes, class_to_idx
+
 
 
 def make_dataset(
@@ -312,34 +344,3 @@ class PlaceImageFolder(DatasetFolder):
         )
         self.imgs = self.samples
 
-    def find_classes(self, directory: str) -> Tuple[List[str], Dict[str, int]]:
-        """Find the class folders in a dataset structured as follows::
-        dog:
-        root/d/dog/xxx.png
-        root/d/dog/xxy.png
-        root/d/dog/[...]/xxz.png
-
-        This method can be overridden to only consider
-        a subset of classes, or to adapt to a different dataset directory structure.
-
-        Args:
-            directory(str): Root directory path, corresponding to ``self.root``
-
-        Raises:
-            FileNotFoundError: If ``dir`` has no class folders.
-
-        Returns:
-            (Tuple[List[str], Dict[str, int]]): List of all classes and dictionary mapping each class to an index.
-        """
-        classes = []
-        for class_capital in os.scandir(directory):
-            if class_capital.is_dir():
-                for class_name in os.scandir(class_capital.path):
-                    if class_name.is_dir():
-                        classes.append(class_capital.name+'/'+class_name.name)
-        classes = sorted(classes)
-        if not classes:
-            raise FileNotFoundError(f"Couldn't find any class folder in {directory}.")
-
-        class_to_idx = {cls_name: i for i, cls_name in enumerate(classes)}
-        return classes, class_to_idx

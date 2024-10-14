@@ -47,6 +47,7 @@ if __name__ == '__main__':
 
     # dataset = datasets.ImageFolder(hps.dataset.root, transform=transform)
     dataset = place_dataset.PlaceImageFolder(hps.dataset.root, transform=transform)
+    print('Start Training...')
     # start training
     trainer = Trainer(hps=hps, dataset=dataset, **state)
     trainer.train()
