@@ -79,6 +79,7 @@ class Trainer:
         """
         Train network
         """
+        torch.autograd.set_detect_anomaly(True) # debug
         self.graph.train()
 
         for epoch in range(self.num_epochs):
