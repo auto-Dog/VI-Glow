@@ -137,7 +137,7 @@ class Trainer:
                         self.writer.add_scalar('loss/classification_loss', classification_loss, self.step)
 
                 # backward model
-                self.graph.zero_grad()
+                # self.graph.zero_grad()
                 self.optimizer.zero_grad()
                 loss.backward()
                 # gradient operation
