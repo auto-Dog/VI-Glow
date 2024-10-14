@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 from typing import Tuple, Dict, List
 
 def find_classes(dir_path):
-    categories_path_list = list(dir_path.glob('*'))
+    categories_path_list = list(pathlib.Path(dir_path).glob('*'))
     classes = []
     for item in categories_path_list:
         if item.is_dir():
