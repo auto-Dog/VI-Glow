@@ -312,9 +312,9 @@ def f(in_channels, hidden_channels, out_channels):
     """
     return nn.Sequential(
         Conv2d(in_channels, hidden_channels),
-        nn.ReLU(inplace=True),
+        nn.ReLU(inplace=False),
         Conv2d(hidden_channels, hidden_channels, kernel_size=1),
-        nn.ReLU(inplace=True),
+        nn.ReLU(inplace=False),
         Conv2dZeros(hidden_channels, out_channels)
     )
 
