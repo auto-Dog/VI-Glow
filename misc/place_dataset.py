@@ -20,7 +20,7 @@ def find_classes(dir_path):
     return classes, class_to_idx
 
 # 1. Subclass torch.utils.data.Dataset
-class ImageFolderCustom(Dataset):
+class PlaceImageFolder(Dataset):
     
     # 2. Initialize with a targ_dir and transform (optional) parameter
     def __init__(self, targ_dir: str, transform=None) -> None:

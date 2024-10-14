@@ -91,12 +91,16 @@ class InvConv2dLU(nn.Module):
 
         weight = np.random.randn(in_channel, in_channel)
         q, _ = la.qr(weight)
-        w_p0, w_l0, w_u0 = la.lu(q.astype(np.float32))
-        w_p = w_p0.copy()
-        w_l = w_l0.copy()
-        w_u = w_u0.copy()
+        w_p, w_l, w_u = la.lu(q.astype(np.float32))
+        def my_diag(matrix):
+            # Ensure the matrix is square
+            if matrix.shape[0] != matrix.shape[1]:
+                raise ValueError("The input matrix must be square")
+            # Extract the diagonal elements using slicing
+            diagonal = matrix[np.arange(matrix.shape[0]), np.arange(matrix.shape[0])]
+            return diagonal
         
-        w_s = np.diag(w_u)
+        w_s = my_diag(w_u)  # np.diag is not writeable
         w_u = np.triu(w_u, 1)
         u_mask = np.triu(np.ones_like(w_u), 1)
         l_mask = u_mask.T
