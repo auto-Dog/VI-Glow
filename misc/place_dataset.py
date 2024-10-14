@@ -37,7 +37,7 @@ class PlaceImageFolder(Dataset):
     def load_image(self, index: int) -> Image.Image:
         "Opens an image via a path and returns it."
         image_path = self.paths[index]
-        return Image.open(image_path) 
+        return Image.open(image_path).convert('RGB') 
     
     # 5. Overwrite the __len__() method (optional but recommended for subclasses of torch.utils.data.Dataset)
     def __len__(self) -> int:
