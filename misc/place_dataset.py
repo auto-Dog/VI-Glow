@@ -116,6 +116,7 @@ def make_dataset(
         target_dir = os.path.join(directory, target_class)
         if not os.path.isdir(target_dir):
             continue
+        print(target_dir)   # debug
         for root, _, fnames in sorted(os.walk(target_dir, followlinks=True)):
             for fname in sorted(fnames):
                 path = os.path.join(root, fname)
